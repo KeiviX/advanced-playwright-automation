@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  playwright-tests:
+    build: .
+    volumes:
+      - ./test-results:/app/test-results
+      - ./playwright-report:/app/playwright-report
+      - ./allure-results:/app/allure-results
+    environment:
+      - CI=true
+      - HEADLESS=true
+    networks:
+      - test-network
+
+  allure-server:
+    image: frankescobar/allure-docker-service
+    ports:
+      - "5050:5050"
+    volumes:
+      - ./allure-results:/app/allure-results
+      - ./allure-reports:/app/default-reports
+    environment:
+      CHECK_RESULTS_EVERY_SECONDS: 3
+      KEEP_HISTORY: 1
+    networks:
+      - test-network
+
+  mock-api:
+    image: wiremock/wiremock:latest
+    ports:
+      - "3001:8080"
+    volumes:
+      - ./mock-data:/home/wiremock
+    command: ["--global-response-templating", "--verbose"]
+    networks:
+      - test-network
+
+networks:
+  test-network:
+    driver: bridge

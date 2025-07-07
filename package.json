@@ -1,0 +1,40 @@
+{
+  "name": "playwright-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:ui": "playwright test tests/ui/",
+    "test:api": "playwright test tests/api/",
+    "test:performance": "playwright test tests/performance/",
+    "test:accessibility": "playwright test tests/accessibility/",
+    "test:visual": "playwright test tests/visual/",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "test:docker": "playwright test --config=playwright.config.ts",
+    "test:parallel": "playwright test --workers=4",
+    "report": "playwright show-report",
+    "allure:generate": "allure generate allure-results --clean -o allure-report",
+    "allure:serve": "allure serve allure-results",
+    "start:mock-api": "node mock-server.js",
+    "lint": "eslint src/ tests/ --ext .ts",
+    "typecheck": "tsc --noEmit",
+    "install:browsers": "playwright install"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@playwright/test": "^1.53.2",
+    "@types/node": "^24.0.10",
+    "allure-commandline": "^2.34.1",
+    "allure-playwright": "^3.3.0",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0"
+  }
+}
