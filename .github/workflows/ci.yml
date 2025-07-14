@@ -31,7 +31,7 @@ jobs:
       run: npx playwright install --with-deps ${{ matrix.browser }}
       
     - name: Run Playwright tests
-      run: npx playwright test --project=${{ matrix.browser }}
+      run: npx playwright test --project=${{ matrix.browser }} --update-snapshots
       env:
         CI: true
         
@@ -137,16 +137,28 @@ jobs:
     needs: [test, performance-test, accessibility-test]
     runs-on: ubuntu-latest
     if: always()
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      
     - name: Download all artifacts
       uses: actions/download-artifact@v4
       
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      if: github.ref == 'refs/heads/main'
+    - name: Setup Pages
+      uses: actions/configure-pages@v4
+      
+    - name: Upload to GitHub Pages
+      uses: actions/upload-pages-artifact@v3
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./
+        path: ./
+        
+    - name: Deploy to GitHub Pages
+      uses: actions/deploy-pages@v4
+      if: github.ref == 'refs/heads/main'
         
   notify:
     needs: [test, security-scan, performance-test, accessibility-test]
@@ -158,6 +170,5 @@ jobs:
       with:
         status: ${{ job.status }}
         channel: '#qa-automation'
-        webhook_url: ${{ secrets.SLACK_WEBHOOK }}
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
